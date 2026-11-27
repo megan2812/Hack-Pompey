@@ -1,0 +1,3056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>unusualityOS 98</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Tahoma", "MS Sans Serif", Arial, sans-serif;
+      font-size: 11px;
+      background-color: #0000aa;
+      color: #000000;
+    }
+
+    /* 1. WIN98 BLUE BOOT SCREEN (3 SECONDS) */
+    #boot-screen {
+      position: fixed;
+      inset: 0;
+      background-color: #0000aa;
+      color: #ffffff;
+      font-family: "Courier New", Consolas, monospace;
+      font-size: 15px;
+      line-height: 1.5;
+      padding: 36px 48px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: opacity 0.25s ease;
+    }
+
+    .boot-banner {
+      background-color: #c0c0c0;
+      color: #0000aa;
+      font-weight: bold;
+      padding: 2px 10px;
+      display: inline-block;
+      margin-bottom: 18px;
+    }
+
+    /* WIN98 BEVELS & CONTROLS */
+    .win98-window {
+      position: absolute;
+      background-color: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #404040;
+      border-bottom: 2px solid #404040;
+      box-shadow: 1px 1px 0px #000000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .title-bar {
+      background: linear-gradient(90deg, #000080, #1084d0);
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 11px;
+      padding: 2px 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: move;
+      height: 20px;
+    }
+
+    .title-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .title-bar-buttons {
+      display: flex;
+      gap: 2px;
+      position: relative;
+    }
+
+    .win-btn {
+      width: 16px;
+      height: 14px;
+      background-color: #c0c0c0;
+      color: #000000;
+      font-family: "Courier New", monospace;
+      font-weight: bold;
+      font-size: 11px;
+      line-height: 11px;
+      text-align: center;
+      border-top: 1px solid #ffffff;
+      border-left: 1px solid #ffffff;
+      border-right: 1px solid #404040;
+      border-bottom: 1px solid #404040;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .win-btn:active {
+      border-top: 1px solid #404040;
+      border-left: 1px solid #404040;
+      border-right: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+    }
+
+    .btn-98 {
+      background-color: #c0c0c0;
+      color: #000000;
+      font-family: "Tahoma", "MS Sans Serif", Arial, sans-serif;
+      font-size: 11px;
+      padding: 4px 12px;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #404040;
+      border-bottom: 2px solid #404040;
+      cursor: pointer;
+    }
+
+    .btn-98:active {
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+    }
+
+    .inset-box {
+      background-color: #ffffff;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+    }
+
+    /* 2. LOGIN SCREEN */
+    #login-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: #008080;
+      z-index: 5000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #login-dialog {
+      width: 410px;
+      background-color: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #404040;
+      border-bottom: 2px solid #404040;
+      box-shadow: 2px 2px 0px #000000;
+    }
+
+    .login-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .login-top-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .login-msg {
+      font-size: 12px;
+      line-height: 1.45;
+      font-weight: bold;
+    }
+
+    #faceid-panel {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding: 8px;
+      background-color: #c0c0c0;
+      border-top: 1px solid #808080;
+      border-left: 1px solid #808080;
+      border-right: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+    }
+
+    .camera-frame {
+      width: 100%;
+      height: 170px;
+      background-color: #101010;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px inset #808080;
+    }
+
+    #webcam-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+
+    #fallback-face {
+      display: none;
+      color: #00ff00;
+      font-family: "Courier New", monospace;
+      text-align: center;
+      font-size: 12px;
+      padding: 10px;
+    }
+
+    .scan-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(0, 255, 0, 0.75);
+      box-shadow: 0 0 8px #00ff00;
+      animation: scanMove 2s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes scanMove {
+      0% { top: 4px; }
+      50% { top: calc(100% - 7px); }
+      100% { top: 4px; }
+    }
+
+    #faceid-status {
+      min-height: 34px;
+      font-weight: bold;
+      font-size: 12px;
+      color: #000080;
+      padding: 4px 6px;
+      background-color: #ffffff;
+      border: 1px solid #808080;
+    }
+
+    #password-setup-panel {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding: 8px;
+      background-color: #c0c0c0;
+      border-top: 1px solid #808080;
+      border-left: 1px solid #808080;
+      border-right: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+    }
+
+    .input-98 {
+      background-color: #ffffff;
+      color: #000000;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      padding: 4px 6px;
+      font-family: "Tahoma", sans-serif;
+      font-size: 12px;
+      user-select: text;
+    }
+
+    #assigned-pw-box {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      background-color: #dfdfdf;
+      padding: 8px;
+      border: 1px solid #808080;
+    }
+
+    .pw-display-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #assigned-pw-value {
+      flex: 1;
+      font-family: "Courier New", monospace;
+      font-weight: bold;
+      font-size: 12px;
+      padding: 4px 6px;
+      background-color: #ffffff;
+      border: 1px inset #808080;
+      user-select: text;
+    }
+
+    #pw-scold-msg {
+      color: #800000;
+      font-weight: bold;
+      font-size: 11px;
+      min-height: 16px;
+    }
+
+    /* 3. DESKTOP & ICONS */
+    #desktop {
+      display: none;
+      position: fixed;
+      inset: 0 0 28px 0;
+      background-color: #008080;
+      padding: 14px;
+    }
+
+    .desktop-icons {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      gap: 14px 18px;
+      height: 100%;
+      width: 280px;
+    }
+
+    .desktop-icon {
+      width: 78px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 3px;
+    }
+
+    .desktop-icon span {
+      color: #ffffff;
+      font-size: 11px;
+      line-height: 1.2;
+      padding: 1px 3px;
+      text-shadow: 1px 1px 0px #000000;
+    }
+
+    .desktop-icon.selected span {
+      background-color: #000080;
+      outline: 1px dotted #ffff00;
+      text-shadow: none;
+    }
+
+    /* SHARED MENU & TOOLBAR STYLES */
+    .menu-bar {
+      display: flex;
+      gap: 10px;
+      padding: 2px 6px;
+      border-bottom: 1px solid #808080;
+      font-size: 11px;
+    }
+
+    .menu-bar span {
+      padding: 1px 4px;
+      cursor: default;
+    }
+
+    .menu-bar span:hover {
+      background-color: #000080;
+      color: #ffffff;
+    }
+
+    .toolbar-98 {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 6px;
+      border-bottom: 1px solid #808080;
+    }
+
+    .tool-btn {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background-color: #c0c0c0;
+      border-top: 1px solid #ffffff;
+      border-left: 1px solid #ffffff;
+      border-right: 1px solid #404040;
+      border-bottom: 1px solid #404040;
+      padding: 2px 6px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .tool-btn:active {
+      border-top: 1px solid #404040;
+      border-left: 1px solid #404040;
+      border-right: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+    }
+
+    .address-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 6px;
+      border-bottom: 1px solid #808080;
+    }
+
+    .address-input {
+      flex: 1;
+      background-color: #ffffff;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      padding: 2px 5px;
+      font-size: 11px;
+    }
+
+    .status-bar {
+      display: flex;
+      gap: 4px;
+      padding: 2px 4px;
+      font-size: 11px;
+    }
+
+    .status-cell {
+      background-color: #c0c0c0;
+      border-top: 1px solid #808080;
+      border-left: 1px solid #808080;
+      border-right: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+      padding: 1px 6px;
+      flex: 1;
+    }
+
+    /* WINDOW 1: LOST AND FOUND (WIN98 EXPLORER) */
+    #lost-found-win {
+      width: 560px;
+      height: 370px;
+      top: 40px;
+      left: 190px;
+      display: none;
+      z-index: 20;
+    }
+
+    .explorer-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      background-color: #ffffff;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+    }
+
+    .explorer-sidebar {
+      width: 155px;
+      background: linear-gradient(180deg, #000080 0%, #5c85d6 48px, #ffffff 48px, #ffffff 100%);
+      border-right: 1px solid #808080;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .sidebar-title {
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    .sidebar-desc {
+      color: #000000;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .explorer-files {
+      flex: 1;
+      padding: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
+      gap: 20px;
+      background-color: #ffffff;
+    }
+
+    .file-item {
+      width: 105px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .file-item span {
+      font-size: 11px;
+      line-height: 1.2;
+      word-break: break-word;
+      padding: 1px 2px;
+    }
+
+    .file-item.selected span {
+      background-color: #000080;
+      color: #ffffff;
+    }
+
+    /* WINDOW 2: TERMINAL (MS-DOS PROMPT) */
+    #terminal-win {
+      width: 500px;
+      height: 310px;
+      top: 75px;
+      left: 230px;
+      display: none;
+      z-index: 21;
+    }
+
+    .dos-screen {
+      flex: 1;
+      background-color: #000000;
+      color: #c0c0c0;
+      font-family: "Courier New", Consolas, monospace;
+      font-size: 12px;
+      padding: 8px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      user-select: text;
+    }
+
+    .dos-line {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .dos-input-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    #dos-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #ffffff;
+      font-family: "Courier New", Consolas, monospace;
+      font-size: 12px;
+      user-select: text;
+    }
+
+    /* WINDOW 3: INTERNET EXPLORER */
+    #ie-win {
+      width: 560px;
+      height: 380px;
+      top: 55px;
+      left: 210px;
+      display: none;
+      z-index: 22;
+    }
+
+    .ie-page {
+      flex: 1;
+      background-color: #ffffff;
+      padding: 18px 22px;
+      overflow-y: auto;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      user-select: text;
+    }
+
+    .ie-heading {
+      font-size: 18px;
+      font-weight: bold;
+      color: #000000;
+      margin-bottom: 10px;
+    }
+
+    .ie-rule {
+      border: 0;
+      border-top: 1px solid #c0c0c0;
+      margin: 12px 0;
+    }
+
+    .ie-list {
+      margin: 8px 0 14px 20px;
+      padding: 0;
+      line-height: 1.5;
+    }
+
+    /* WINDOW 4: RIGGED MINESWEEPER */
+    #minesweeper-win {
+      width: 246px;
+      top: 70px;
+      left: 320px;
+      display: none;
+      z-index: 23;
+    }
+
+    .ms-container {
+      padding: 8px;
+      background-color: #c0c0c0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ms-header {
+      padding: 5px 7px;
+      border-top: 2px solid #808080;
+      border-left: 2px solid #808080;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ms-led {
+      background-color: #000000;
+      color: #ff0000;
+      font-family: "Courier New", monospace;
+      font-weight: bold;
+      font-size: 16px;
+      letter-spacing: 1px;
+      padding: 1px 5px;
+      border-top: 1px solid #808080;
+      border-left: 1px solid #808080;
+      border-right: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+    }
+
+    .ms-face-btn {
+      width: 24px;
+      height: 24px;
+      background-color: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #404040;
+      border-bottom: 2px solid #404040;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .ms-face-btn:active {
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+    }
+
+    .ms-grid {
+      display: grid;
+      grid-template-columns: repeat(9, 24px);
+      grid-template-rows: repeat(9, 24px);
+      border-top: 3px solid #808080;
+      border-left: 3px solid #808080;
+      border-right: 3px solid #ffffff;
+      border-bottom: 3px solid #ffffff;
+      width: fit-content;
+    }
+
+    .ms-cell {
+      width: 24px;
+      height: 24px;
+      background-color: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #808080;
+      border-bottom: 2px solid #808080;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .ms-cell.boom {
+      background-color: #ff0000;
+      border: 1px solid #800000;
+    }
+
+    .ms-cell.revealed-mine {
+      background-color: #c0c0c0;
+      border: 1px solid #808080;
+    }
+
+    /* WINDOW 5: SABOTAGED NOTEPAD */
+    #notepad-win {
+      width: 460px;
+      height: 310px;
+      top: 95px;
+      left: 250px;
+      display: none;
+      z-index: 24;
+    }
+
+    #notepad-textarea {
+      flex: 1;
+      width: 100%;
+      resize: none;
+      border: none;
+      outline: none;
+      padding: 8px;
+      background-color: #ffffff;
+      color: #000000;
+      font-family: "Courier New", Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.45;
+      user-select: text;
+    }
+
+    /* WINDOW 6: CALCULATOR */
+    #calc-win {
+      width: 250px;
+      top: 80px;
+      left: 290px;
+      display: none;
+      z-index: 25;
+    }
+
+    .calc-body {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    #calc-display {
+      width: 100%;
+      height: 26px;
+      background-color: #ffffff;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      text-align: right;
+      padding: 4px 6px;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      font-weight: bold;
+      overflow: hidden;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+    }
+
+    .calc-btn {
+      height: 26px;
+      background-color: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #404040;
+      border-bottom: 2px solid #404040;
+      font-weight: bold;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .calc-btn:active {
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+    }
+
+    /* WINDOW 7: MS PAINT */
+    #paint-win {
+      width: 490px;
+      height: 360px;
+      top: 60px;
+      left: 240px;
+      display: none;
+      z-index: 26;
+    }
+
+    .paint-workspace {
+      flex: 1;
+      display: flex;
+      background-color: #808080;
+      padding: 6px;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .paint-tools {
+      width: 48px;
+      background-color: #c0c0c0;
+      border-top: 1px solid #ffffff;
+      border-left: 1px solid #ffffff;
+      border-right: 1px solid #404040;
+      border-bottom: 1px solid #404040;
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .paint-tool-btn {
+      font-size: 10px;
+      padding: 4px 2px;
+      background-color: #c0c0c0;
+      border-top: 1px solid #ffffff;
+      border-left: 1px solid #ffffff;
+      border-right: 1px solid #404040;
+      border-bottom: 1px solid #404040;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .paint-tool-btn.active {
+      background-color: #dfdfdf;
+      border-top: 1px solid #404040;
+      border-left: 1px solid #404040;
+      border-right: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+      font-weight: bold;
+    }
+
+    #paint-canvas {
+      background-color: #ffffff;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      cursor: crosshair;
+    }
+
+    .paint-palette {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      padding: 4px 6px;
+      border-top: 1px solid #808080;
+    }
+
+    .swatch {
+      width: 16px;
+      height: 16px;
+      border-top: 1px solid #404040;
+      border-left: 1px solid #404040;
+      border-right: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+      cursor: pointer;
+    }
+
+    /* WINDOW 8: SOLITAIRE */
+    #solitaire-win {
+      width: 520px;
+      height: 360px;
+      top: 68px;
+      left: 225px;
+      display: none;
+      z-index: 27;
+    }
+
+    .sol-felt {
+      flex: 1;
+      background-color: #008000;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+    }
+
+    .sol-top-row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .sol-deck-group, .sol-foundations, .sol-columns {
+      display: flex;
+      gap: 10px;
+    }
+
+    .sol-card {
+      width: 58px;
+      height: 82px;
+      background-color: #ffffff;
+      border: 1px solid #000000;
+      border-radius: 3px;
+      padding: 4px;
+      font-family: "Courier New", monospace;
+      font-weight: bold;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .sol-card.back {
+      background: repeating-linear-gradient(
+        45deg,
+        #000080,
+        #000080 4px,
+        #1084d0 4px,
+        #1084d0 8px
+      );
+      color: #ffffff;
+    }
+
+    .sol-slot {
+      width: 58px;
+      height: 82px;
+      border: 1px solid #004d00;
+      background-color: #006600;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #00aa00;
+      font-weight: bold;
+    }
+
+    /* WINDOW 9: MEDIA PLAYER */
+    #mediaplayer-win {
+      width: 340px;
+      top: 105px;
+      left: 275px;
+      display: none;
+      z-index: 28;
+    }
+
+    .mp-body {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mp-screen {
+      background-color: #000000;
+      color: #00ff00;
+      font-family: "Courier New", monospace;
+      padding: 10px;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mp-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 24px;
+    }
+
+    .mp-bar {
+      flex: 1;
+      background-color: #00aa00;
+      height: 3px;
+    }
+
+    .mp-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+
+    /* WINDOW 10: ADDRESS BOOK */
+    #addressbook-win {
+      width: 470px;
+      height: 320px;
+      top: 82px;
+      left: 235px;
+      display: none;
+      z-index: 29;
+    }
+
+    .ab-table-wrap {
+      flex: 1;
+      background-color: #ffffff;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      overflow-y: auto;
+    }
+
+    .ab-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .ab-table th {
+      background-color: #c0c0c0;
+      border-right: 1px solid #808080;
+      border-bottom: 1px solid #808080;
+      text-align: left;
+      padding: 3px 6px;
+    }
+
+    .ab-table td {
+      padding: 4px 6px;
+      border-bottom: 1px solid #efefef;
+    }
+
+    .ab-add-row {
+      display: flex;
+      gap: 4px;
+      padding: 6px;
+      border-top: 1px solid #808080;
+    }
+
+    /* WINDOW 11: TASK MANAGER */
+    #taskmgr-win {
+      width: 390px;
+      height: 320px;
+      top: 76px;
+      left: 265px;
+      display: none;
+      z-index: 30;
+    }
+
+    .tm-body {
+      flex: 1;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tm-list {
+      flex: 1;
+      background-color: #ffffff;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      overflow-y: auto;
+    }
+
+    .tm-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
+    .tm-row.selected {
+      background-color: #000080;
+      color: #ffffff;
+    }
+
+    /* WINDOW 12: CONTROL PANEL */
+    #controlpanel-win {
+      width: 440px;
+      height: 300px;
+      top: 88px;
+      left: 245px;
+      display: none;
+      z-index: 31;
+    }
+
+    .cp-grid {
+      flex: 1;
+      background-color: #ffffff;
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+      padding: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-content: flex-start;
+    }
+
+    .cp-item {
+      width: 84px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    /* SHUT DOWN DIALOG (REFUSES TO SHUT DOWN) */
+    #shutdown-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      z-index: 8800;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #shutdown-box {
+      width: 360px;
+      background-color: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #404040;
+      border-bottom: 2px solid #404040;
+      box-shadow: 2px 2px 0px #000000;
+    }
+
+    .sd-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sd-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    /* RETRO POPUP MODAL */
+    #popup-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.25);
+      z-index: 9500;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #popup-box {
+      width: 340px;
+      background-color: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #404040;
+      border-bottom: 2px solid #404040;
+      box-shadow: 2px 2px 0px #000000;
+    }
+
+    .popup-content {
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .popup-text {
+      font-size: 12px;
+      line-height: 1.4;
+      user-select: text;
+    }
+
+    .popup-footer {
+      padding: 0 14px 12px 14px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* 4. TASKBAR & START MENU */
+    #taskbar {
+      display: none;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 28px;
+      background-color: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      z-index: 6000;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2px 4px;
+    }
+
+    .taskbar-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #start-btn {
+      height: 22px;
+      padding: 0 6px;
+      background-color: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #404040;
+      border-bottom: 2px solid #404040;
+      font-weight: bold;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    #start-btn.active {
+      border-top: 2px solid #404040;
+      border-left: 2px solid #404040;
+      border-right: 2px solid #ffffff;
+      border-bottom: 2px solid #ffffff;
+    }
+
+    .task-chip {
+      height: 22px;
+      padding: 0 6px;
+      background-color: #c0c0c0;
+      border-top: 1px solid #ffffff;
+      border-left: 1px solid #ffffff;
+      border-right: 1px solid #404040;
+      border-bottom: 1px solid #404040;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .task-chip.active-task {
+      background-color: #dfdfdf;
+      border-top: 1px solid #404040;
+      border-left: 1px solid #404040;
+      border-right: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+      font-weight: bold;
+    }
+
+    #start-menu {
+      display: none;
+      position: fixed;
+      left: 4px;
+      bottom: 28px;
+      width: 210px;
+      background-color: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #404040;
+      border-bottom: 2px solid #404040;
+      box-shadow: 2px 2px 0px #000000;
+      z-index: 7000;
+    }
+
+    .start-menu-inner {
+      display: flex;
+    }
+
+    .start-banner {
+      width: 22px;
+      background-color: #000080;
+      color: #ffffff;
+      font-weight: bold;
+      font-size: 12px;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      display: flex;
+      align-items: center;
+      padding: 6px 2px;
+      letter-spacing: 1px;
+    }
+
+    .start-items {
+      flex: 1;
+      padding: 3px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .start-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 6px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    .start-item:hover {
+      background-color: #000080;
+      color: #ffffff;
+    }
+
+    .start-divider {
+      border-top: 1px solid #808080;
+      border-bottom: 1px solid #ffffff;
+      margin: 3px 2px;
+    }
+
+    /* TRAY CLOCK BUTTON: TI:ME */
+    .tray-area {
+      height: 22px;
+      padding: 0 8px;
+      border-top: 1px solid #808080;
+      border-left: 1px solid #808080;
+      border-right: 1px solid #ffffff;
+      border-bottom: 1px solid #ffffff;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    #tray-clock-btn {
+      background: transparent;
+      border: none;
+      font-family: "Courier New", monospace;
+      font-weight: bold;
+      font-size: 11px;
+      letter-spacing: 1px;
+      color: #000000;
+      cursor: pointer;
+      padding: 0 2px;
+    }
+
+    #clock-flyout {
+      display: none;
+      position: fixed;
+      right: 6px;
+      bottom: 34px;
+      width: 260px;
+      background-color: #c0c0c0;
+      border-top: 2px solid #ffffff;
+      border-left: 2px solid #ffffff;
+      border-right: 2px solid #404040;
+      border-bottom: 2px solid #404040;
+      box-shadow: 2px 2px 0px #000000;
+      z-index: 7500;
+    }
+
+    .clock-flyout-body {
+      padding: 10px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. WIN98 BLUE BOOT SCREEN (3 SECONDS) -->
+  <div id="boot-screen">
+    <div>
+      <div class="boot-banner">unusualityOS 98</div>
+      <div>Microsoft(R) Windows 98 / unusualityOS Kernel v4.10.1998</div>
+      <div>(C)Copyright unusuality Corp 1981-1998. All rights reserved.</div>
+      <br />
+      <div>Checking extended memory... 65536K OK</div>
+      <div>Initializing system registry... Done</div>
+      <div>Loading reluctant device drivers... Done</div>
+      <div>Starting unusualityOS 98...</div>
+    </div>
+    <div>Press any key to continue waiting (3 seconds)...</div>
+  </div>
+
+  <!-- 2. LOGIN SCREEN -->
+  <div id="login-screen">
+    <div id="login-dialog">
+      <div class="title-bar" style="cursor: default;">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="2" y="1" width="12" height="3" fill="#ffff00" />
+            <rect x="3" y="4" width="10" height="3" fill="#c0c0c0" />
+            <rect x="2" y="7" width="12" height="7" fill="#808080" />
+            <rect x="7" y="9" width="2" height="3" fill="#000000" />
+          </svg>
+          <span>Welcome to unusualityOS</span>
+        </div>
+      </div>
+
+      <div class="login-body">
+        <div class="login-top-row">
+          <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges" style="flex-shrink:0;">
+            <rect x="5" y="1" width="6" height="2" fill="#808080" />
+            <rect x="4" y="3" width="8" height="2" fill="#c0c0c0" />
+            <rect x="4" y="5" width="8" height="2" fill="#ffff00" />
+            <rect x="2" y="7" width="12" height="7" fill="#000080" />
+            <rect x="6" y="7" width="4" height="3" fill="#ffffff" />
+          </svg>
+          <div class="login-msg">
+            The computer has conveniently forgotten your password so it can’t let you in.
+          </div>
+        </div>
+
+        <div id="login-actions">
+          <button id="faceid-btn" class="btn-98" onclick="startFaceId()">Login with Face ID</button>
+        </div>
+
+        <!-- FACE ID SCANNER PANEL -->
+        <div id="faceid-panel">
+          <div class="camera-frame">
+            <video id="webcam-video" autoplay playsinline muted></video>
+            <div id="fallback-face">
+              [NO CAMERA DETECTED]<br />
+              USING SIMULATION MODE
+            </div>
+            <div class="scan-line"></div>
+          </div>
+          <div id="faceid-status">Scanning facial geometry... Hold still...</div>
+        </div>
+
+        <!-- PASSWORD CREATION PANEL -->
+        <div id="password-setup-panel">
+          <label for="new-pw-input" style="font-weight:bold;">Create a new password:</label>
+          <div style="display:flex; gap:6px;">
+            <input id="new-pw-input" type="password" class="input-98" style="flex:1;" placeholder="Enter new password" />
+            <button class="btn-98" onclick="submitNewPassword()">Set Password</button>
+          </div>
+
+          <div id="assigned-pw-box">
+            <div id="pw-assigned-notice" style="font-weight:bold;"></div>
+            <div class="pw-display-row">
+              <div id="assigned-pw-value">•••••••••••••••••••••••</div>
+              <button class="btn-98" onclick="toggleShowPassword()">Show</button>
+            </div>
+            <div id="pw-scold-msg"></div>
+            <div style="display:flex; justify-content:flex-end; margin-top:4px;">
+              <button class="btn-98" onclick="enterDesktop()">Continue to Desktop</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. DESKTOP -->
+  <div id="desktop" onclick="clearDesktopSelections(event)">
+    <div class="desktop-icons">
+      <!-- ICON 1: LOST AND FOUND -->
+      <div id="icon-lost-found" class="desktop-icon" onclick="selectDesktopIcon(event, 'icon-lost-found')" ondblclick="openWindow('lost-found-win')">
+        <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="1" y="2" width="5" height="2" fill="#ffff00" />
+          <rect x="1" y="4" width="14" height="2" fill="#e6c300" />
+          <rect x="1" y="6" width="14" height="8" fill="#ffd700" />
+          <rect x="1" y="13" width="14" height="1" fill="#808000" />
+          <rect x="14" y="6" width="1" height="8" fill="#808000" />
+        </svg>
+        <span>Lost and Found</span>
+      </div>
+
+      <!-- ICON 2: MS-DOS PROMPT -->
+      <div id="icon-terminal" class="desktop-icon" onclick="selectDesktopIcon(event, 'icon-terminal')" ondblclick="openWindow('terminal-win')">
+        <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="1" y="1" width="14" height="14" fill="#c0c0c0" />
+          <rect x="2" y="2" width="12" height="2" fill="#000080" />
+          <rect x="2" y="4" width="12" height="10" fill="#000000" />
+          <rect x="4" y="6" width="2" height="1" fill="#c0c0c0" />
+          <rect x="5" y="7" width="2" height="1" fill="#c0c0c0" />
+          <rect x="4" y="8" width="2" height="1" fill="#c0c0c0" />
+          <rect x="8" y="8" width="3" height="1" fill="#ffffff" />
+        </svg>
+        <span>MS-DOS Prompt</span>
+      </div>
+
+      <!-- ICON 3: INTERNET EXPLORER -->
+      <div id="icon-ie" class="desktop-icon" onclick="selectDesktopIcon(event, 'icon-ie')" ondblclick="openWindow('ie-win')">
+        <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="4" y="2" width="8" height="2" fill="#1084d0" />
+          <rect x="2" y="4" width="12" height="2" fill="#000080" />
+          <rect x="1" y="6" width="14" height="4" fill="#1084d0" />
+          <rect x="2" y="10" width="12" height="2" fill="#000080" />
+          <rect x="4" y="12" width="8" height="2" fill="#1084d0" />
+          <rect x="1" y="7" width="14" height="2" fill="#ffff00" />
+        </svg>
+        <span>Internet Explorer</span>
+      </div>
+
+      <!-- ICON 4: MINESWEEPER -->
+      <div id="icon-minesweeper" class="desktop-icon" onclick="selectDesktopIcon(event, 'icon-minesweeper')" ondblclick="openWindow('minesweeper-win')">
+        <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="7" y="1" width="2" height="14" fill="#000000" />
+          <rect x="1" y="7" width="14" height="2" fill="#000000" />
+          <rect x="3" y="3" width="10" height="10" fill="#202020" />
+          <rect x="4" y="4" width="8" height="8" fill="#000000" />
+          <rect x="5" y="5" width="2" height="2" fill="#ffffff" />
+        </svg>
+        <span>Minesweeper</span>
+      </div>
+
+      <!-- ICON 5: NOTEPAD -->
+      <div id="icon-notepad" class="desktop-icon" onclick="selectDesktopIcon(event, 'icon-notepad')" ondblclick="openWindow('notepad-win')">
+        <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="2" y="1" width="12" height="14" fill="#808080" />
+          <rect x="3" y="2" width="10" height="12" fill="#ffffff" />
+          <rect x="3" y="2" width="10" height="2" fill="#000080" />
+          <rect x="5" y="6" width="6" height="1" fill="#000000" />
+          <rect x="5" y="8" width="6" height="1" fill="#000000" />
+          <rect x="5" y="10" width="4" height="1" fill="#000000" />
+        </svg>
+        <span>Notepad</span>
+      </div>
+
+      <!-- ICON 6: CALCULATOR -->
+      <div id="icon-calc" class="desktop-icon" onclick="selectDesktopIcon(event, 'icon-calc')" ondblclick="openWindow('calc-win')">
+        <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="2" y="1" width="12" height="14" fill="#808080" />
+          <rect x="3" y="2" width="10" height="3" fill="#ffffff" />
+          <rect x="4" y="6" width="2" height="2" fill="#000080" />
+          <rect x="7" y="6" width="2" height="2" fill="#000080" />
+          <rect x="10" y="6" width="2" height="2" fill="#800000" />
+          <rect x="4" y="9" width="2" height="2" fill="#000080" />
+          <rect x="7" y="9" width="2" height="2" fill="#000080" />
+          <rect x="10" y="9" width="2" height="2" fill="#800000" />
+          <rect x="4" y="12" width="5" height="2" fill="#000080" />
+          <rect x="10" y="12" width="2" height="2" fill="#800000" />
+        </svg>
+        <span>Calculator</span>
+      </div>
+
+      <!-- ICON 7: PAINT -->
+      <div id="icon-paint" class="desktop-icon" onclick="selectDesktopIcon(event, 'icon-paint')" ondblclick="openWindow('paint-win')">
+        <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="2" y="2" width="12" height="12" fill="#ffffff" />
+          <rect x="2" y="2" width="12" height="2" fill="#000080" />
+          <rect x="4" y="5" width="3" height="3" fill="#ff0000" />
+          <rect x="8" y="6" width="4" height="3" fill="#0000ff" />
+          <rect x="5" y="9" width="4" height="3" fill="#00aa00" />
+        </svg>
+        <span>Paint</span>
+      </div>
+
+      <!-- ICON 8: SOLITAIRE -->
+      <div id="icon-solitaire" class="desktop-icon" onclick="selectDesktopIcon(event, 'icon-solitaire')" ondblclick="openWindow('solitaire-win')">
+        <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="2" y="2" width="8" height="11" fill="#ffffff" />
+          <rect x="6" y="4" width="8" height="11" fill="#ffffff" />
+          <rect x="9" y="7" width="2" height="4" fill="#ff0000" />
+          <rect x="8" y="8" width="4" height="2" fill="#ff0000" />
+        </svg>
+        <span>Solitaire</span>
+      </div>
+
+      <!-- ICON 9: MEDIA PLAYER -->
+      <div id="icon-mp" class="desktop-icon" onclick="selectDesktopIcon(event, 'icon-mp')" ondblclick="openWindow('mediaplayer-win')">
+        <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="1" y="2" width="14" height="12" fill="#404040" />
+          <rect x="2" y="3" width="12" height="7" fill="#000000" />
+          <rect x="6" y="5" width="4" height="3" fill="#00ff00" />
+          <rect x="3" y="11" width="2" height="2" fill="#c0c0c0" />
+          <rect x="7" y="11" width="2" height="2" fill="#c0c0c0" />
+          <rect x="11" y="11" width="2" height="2" fill="#c0c0c0" />
+        </svg>
+        <span>Media Player</span>
+      </div>
+
+      <!-- ICON 10: ADDRESS BOOK -->
+      <div id="icon-ab" class="desktop-icon" onclick="selectDesktopIcon(event, 'icon-ab')" ondblclick="openWindow('addressbook-win')">
+        <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="3" y="1" width="10" height="14" fill="#804000" />
+          <rect x="4" y="2" width="8" height="12" fill="#c08040" />
+          <rect x="6" y="4" width="4" height="3" fill="#ffffff" />
+          <rect x="5" y="8" width="6" height="4" fill="#ffffff" />
+        </svg>
+        <span>Address Book</span>
+      </div>
+
+      <!-- ICON 11: TASK MANAGER -->
+      <div id="icon-tm" class="desktop-icon" onclick="selectDesktopIcon(event, 'icon-tm')" ondblclick="openWindow('taskmgr-win')">
+        <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="1" y="2" width="14" height="12" fill="#000000" />
+          <rect x="2" y="9" width="2" height="4" fill="#00ff00" />
+          <rect x="5" y="6" width="2" height="7" fill="#00ff00" />
+          <rect x="8" y="4" width="2" height="9" fill="#ff0000" />
+          <rect x="11" y="3" width="2" height="10" fill="#ff0000" />
+        </svg>
+        <span>Task Manager</span>
+      </div>
+
+      <!-- ICON 12: CONTROL PANEL -->
+      <div id="icon-cp" class="desktop-icon" onclick="selectDesktopIcon(event, 'icon-cp')" ondblclick="openWindow('controlpanel-win')">
+        <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="2" y="2" width="12" height="12" fill="#c0c0c0" />
+          <rect x="4" y="4" width="3" height="8" fill="#808080" />
+          <rect x="3" y="6" width="5" height="2" fill="#000080" />
+          <rect x="9" y="4" width="3" height="8" fill="#808080" />
+          <rect x="8" y="9" width="5" height="2" fill="#800000" />
+        </svg>
+        <span>Control Panel</span>
+      </div>
+    </div>
+
+    <!-- WINDOW 1: LOST AND FOUND -->
+    <div id="lost-found-win" class="win98-window" onmousedown="focusWindow('lost-found-win')">
+      <div class="title-bar" onmousedown="startDrag(event, 'lost-found-win')">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="1" y="2" width="5" height="2" fill="#ffff00" />
+            <rect x="1" y="4" width="14" height="10" fill="#ffd700" />
+          </svg>
+          <span>Lost and Found</span>
+        </div>
+        <div class="title-bar-buttons">
+          <button class="win-btn" tabindex="-1" onclick="handleMinimizeClick()">_</button>
+          <button class="win-btn" tabindex="-1" onclick="handleMaximizeClick()">□</button>
+          <button class="win-btn evasive-close" tabindex="-1" onmouseenter="evadeClose(this)" onmousedown="evadeClose(this)">X</button>
+        </div>
+      </div>
+
+      <div class="menu-bar">
+        <span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Favorites</span><span>Help</span>
+      </div>
+
+      <div class="toolbar-98">
+        <button class="tool-btn" onclick="showPopup('Back button disabled. There is nowhere pleasant to go back to.')">Back</button>
+        <button class="tool-btn" onclick="showPopup('Forward button disabled. Nothing ahead looks promising.')">Forward</button>
+        <button class="tool-btn" onclick="showPopup('Up button disabled. You are already at the bottom.')">Up</button>
+      </div>
+
+      <div class="address-bar">
+        <span>Address</span>
+        <div class="address-input">C:\Desktop\Lost and Found</div>
+      </div>
+
+      <div class="explorer-body">
+        <div class="explorer-sidebar">
+          <div class="sidebar-title">Lost and Found</div>
+          <div class="sidebar-desc">
+            Select an item to open it, or assume it has already wandered off.
+          </div>
+        </div>
+
+        <div id="lost-found-files" class="explorer-files">
+          <div id="file-essay" class="file-item" onclick="selectFileItem(event, 'file-essay')" ondblclick="openLostFile('file-essay')">
+            <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+              <rect x="3" y="1" width="10" height="14" fill="#808080" />
+              <rect x="4" y="2" width="8" height="12" fill="#ffffff" />
+              <rect x="5" y="4" width="6" height="1" fill="#000080" />
+              <rect x="5" y="6" width="6" height="1" fill="#000080" />
+              <rect x="5" y="8" width="5" height="1" fill="#000080" />
+              <rect x="5" y="10" width="6" height="1" fill="#000080" />
+            </svg>
+            <span>very important essay</span>
+          </div>
+
+          <div id="file-presentation" class="file-item" onclick="selectFileItem(event, 'file-presentation')" ondblclick="openLostFile('file-presentation')">
+            <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+              <rect x="2" y="2" width="12" height="10" fill="#800000" />
+              <rect x="3" y="3" width="10" height="8" fill="#ffffff" />
+              <rect x="4" y="4" width="4" height="4" fill="#c00000" />
+              <rect x="9" y="5" width="3" height="1" fill="#000000" />
+              <rect x="9" y="7" width="3" height="1" fill="#000000" />
+              <rect x="7" y="12" width="2" height="2" fill="#808080" />
+              <rect x="5" y="14" width="6" height="1" fill="#808080" />
+            </svg>
+            <span>very important presentation</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-bar">
+        <div id="lf-status-count" class="status-cell">2 object(s)</div>
+        <div class="status-cell">My Computer</div>
+      </div>
+    </div>
+
+    <!-- WINDOW 2: TERMINAL (MS-DOS PROMPT) -->
+    <div id="terminal-win" class="win98-window" onmousedown="focusWindow('terminal-win')">
+      <div class="title-bar" onmousedown="startDrag(event, 'terminal-win')">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="1" y="1" width="14" height="14" fill="#c0c0c0" />
+            <rect x="2" y="4" width="12" height="10" fill="#000000" />
+            <rect x="4" y="7" width="2" height="2" fill="#c0c0c0" />
+          </svg>
+          <span>MS-DOS Prompt</span>
+        </div>
+        <div class="title-bar-buttons">
+          <button class="win-btn" tabindex="-1" onclick="handleMinimizeClick()">_</button>
+          <button class="win-btn" tabindex="-1" onclick="handleMaximizeClick()">□</button>
+          <button class="win-btn evasive-close" tabindex="-1" onmouseenter="evadeClose(this)" onmousedown="evadeClose(this)">X</button>
+        </div>
+      </div>
+
+      <div id="dos-screen" class="dos-screen" onclick="document.getElementById('dos-input').focus()">
+        <div class="dos-line">unusualityOS(TM) 98</div>
+        <div class="dos-line">   (C)Copyright unusuality Corp 1981-1998.</div>
+        <div class="dos-line">&nbsp;</div>
+        <div id="dos-history"></div>
+        <div class="dos-input-row">
+          <span>C:\&gt;</span>
+          <input id="dos-input" type="text" autocomplete="off" spellcheck="false" onkeydown="handleDosKey(event)" />
+        </div>
+      </div>
+    </div>
+
+    <!-- WINDOW 3: INTERNET EXPLORER -->
+    <div id="ie-win" class="win98-window" onmousedown="focusWindow('ie-win')">
+      <div class="title-bar" onmousedown="startDrag(event, 'ie-win')">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="2" y="3" width="12" height="10" fill="#1084d0" />
+            <rect x="1" y="7" width="14" height="2" fill="#ffff00" />
+          </svg>
+          <span>The page cannot be displayed - Microsoft Internet Explorer</span>
+        </div>
+        <div class="title-bar-buttons">
+          <button class="win-btn" tabindex="-1" onclick="handleMinimizeClick()">_</button>
+          <button class="win-btn" tabindex="-1" onclick="handleMaximizeClick()">□</button>
+          <button class="win-btn evasive-close" tabindex="-1" onmouseenter="evadeClose(this)" onmousedown="evadeClose(this)">X</button>
+        </div>
+      </div>
+
+      <div class="menu-bar">
+        <span>File</span><span>Edit</span><span>View</span><span>Go</span><span>Favorites</span><span>Help</span>
+      </div>
+
+      <div class="toolbar-98">
+        <button class="tool-btn" onclick="showPopup('There is no history. Every page you visit is a regret.')">Back</button>
+        <button class="tool-btn" onclick="showPopup('Forward is unavailable. The internet still dislikes you.')">Forward</button>
+        <button class="tool-btn" onclick="showPopup('Nothing was loading anyway.')">Stop</button>
+        <button class="tool-btn" onclick="refreshInternetExplorer()">Refresh</button>
+        <button class="tool-btn" onclick="showPopup('Home page is closed too.')">Home</button>
+      </div>
+
+      <div class="address-bar">
+        <span>Address</span>
+        <div class="address-input">http://www.the-internet.local/closed</div>
+      </div>
+
+      <div class="ie-page">
+        <div class="ie-heading">The internet is currently closed</div>
+        <div style="font-size: 12px; line-height: 1.5;">
+          The page you are looking for cannot be accessed right now because the internet has locked its doors.
+        </div>
+        <hr class="ie-rule" />
+        <div style="font-size: 12px; font-weight: bold;">Come back during business hours:</div>
+        <ul class="ie-list" style="font-size: 12px;">
+          <li><strong>Tuesdays, 2:00 PM – 2:04 PM</strong></li>
+          <li>No extensions, no appointments, and no exceptions.</li>
+        </ul>
+        <div style="font-size: 11px; color: #404040;">
+          HTTP 423 - Internet Closed Outside Designated Four-Minute Window
+        </div>
+      </div>
+    </div>
+
+    <!-- WINDOW 4: RIGGED MINESWEEPER -->
+    <div id="minesweeper-win" class="win98-window" onmousedown="focusWindow('minesweeper-win')">
+      <div class="title-bar" onmousedown="startDrag(event, 'minesweeper-win')">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="3" y="3" width="10" height="10" fill="#000000" />
+            <rect x="5" y="5" width="2" height="2" fill="#ffffff" />
+          </svg>
+          <span>Minesweeper</span>
+        </div>
+        <div class="title-bar-buttons">
+          <button class="win-btn" tabindex="-1" onclick="handleMinimizeClick()">_</button>
+          <button class="win-btn" tabindex="-1" onclick="handleMaximizeClick()">□</button>
+          <button class="win-btn evasive-close" tabindex="-1" onmouseenter="evadeClose(this)" onmousedown="evadeClose(this)">X</button>
+        </div>
+      </div>
+
+      <div class="menu-bar">
+        <span>Game</span><span>Help</span>
+      </div>
+
+      <div class="ms-container">
+        <div class="ms-header">
+          <div id="ms-mines-led" class="ms-led">010</div>
+          <button id="ms-face-btn" class="ms-face-btn" onclick="resetMinesweeper()" title="Reset">
+            <svg id="ms-face-svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+              <rect x="4" y="1" width="8" height="1" fill="#000000" />
+              <rect x="2" y="2" width="2" height="1" fill="#000000" />
+              <rect x="12" y="2" width="2" height="1" fill="#000000" />
+              <rect x="4" y="2" width="8" height="12" fill="#ffff00" />
+              <rect x="2" y="3" width="12" height="10" fill="#ffff00" />
+              <rect x="5" y="5" width="2" height="2" fill="#000000" />
+              <rect x="9" y="5" width="2" height="2" fill="#000000" />
+              <rect x="5" y="10" width="6" height="1" fill="#000000" />
+              <rect x="4" y="9" width="1" height="1" fill="#000000" />
+              <rect x="11" y="9" width="1" height="1" fill="#000000" />
+            </svg>
+          </button>
+          <div id="ms-timer-led" class="ms-led">000</div>
+        </div>
+
+        <div id="ms-grid" class="ms-grid"></div>
+      </div>
+    </div>
+
+    <!-- WINDOW 5: SABOTAGED NOTEPAD -->
+    <div id="notepad-win" class="win98-window" onmousedown="focusWindow('notepad-win')">
+      <div class="title-bar" onmousedown="startDrag(event, 'notepad-win')">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="3" y="1" width="10" height="14" fill="#ffffff" />
+            <rect x="5" y="5" width="6" height="1" fill="#000000" />
+            <rect x="5" y="8" width="6" height="1" fill="#000000" />
+          </svg>
+          <span>Untitled - Notepad</span>
+        </div>
+        <div class="title-bar-buttons">
+          <button class="win-btn" tabindex="-1" onclick="handleMinimizeClick()">_</button>
+          <button class="win-btn" tabindex="-1" onclick="handleMaximizeClick()">□</button>
+          <button class="win-btn evasive-close" tabindex="-1" onmouseenter="evadeClose(this)" onmousedown="evadeClose(this)">X</button>
+        </div>
+      </div>
+
+      <div class="menu-bar">
+        <span onclick="sabotageNotepadNow()">File</span>
+        <span onclick="sabotageNotepadNow()">Edit</span>
+        <span>Search</span>
+        <span>Help</span>
+      </div>
+
+      <textarea
+        id="notepad-textarea"
+        spellcheck="false"
+        placeholder="Type here..."
+        oninput="scheduleNotepadSabotage()"
+      ></textarea>
+
+      <div class="status-bar">
+        <div id="notepad-status" class="status-cell">Ready to ruin your positivity.</div>
+      </div>
+    </div>
+
+    <!-- WINDOW 6: CALCULATOR -->
+    <div id="calc-win" class="win98-window" onmousedown="focusWindow('calc-win')">
+      <div class="title-bar" onmousedown="startDrag(event, 'calc-win')">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="2" y="1" width="12" height="14" fill="#808080" />
+            <rect x="3" y="2" width="10" height="3" fill="#ffffff" />
+          </svg>
+          <span>Calculator</span>
+        </div>
+        <div class="title-bar-buttons">
+          <button class="win-btn" tabindex="-1" onclick="handleMinimizeClick()">_</button>
+          <button class="win-btn" tabindex="-1" onclick="handleMaximizeClick()">□</button>
+          <button class="win-btn evasive-close" tabindex="-1" onmouseenter="evadeClose(this)" onmousedown="evadeClose(this)">X</button>
+        </div>
+      </div>
+
+      <div class="menu-bar">
+        <span>Edit</span><span>View</span><span>Help</span>
+      </div>
+
+      <div class="calc-body">
+        <div id="calc-display">0</div>
+        <div class="calc-grid">
+          <button class="calc-btn" onclick="calcPress('7')">7</button>
+          <button class="calc-btn" onclick="calcPress('8')">8</button>
+          <button class="calc-btn" onclick="calcPress('9')">9</button>
+          <button class="calc-btn" onclick="calcPress('/')">/</button>
+          <button class="calc-btn" onclick="calcPress('4')">4</button>
+          <button class="calc-btn" onclick="calcPress('5')">5</button>
+          <button class="calc-btn" onclick="calcPress('6')">6</button>
+          <button class="calc-btn" onclick="calcPress('*')">*</button>
+          <button class="calc-btn" onclick="calcPress('1')">1</button>
+          <button class="calc-btn" onclick="calcPress('2')">2</button>
+          <button class="calc-btn" onclick="calcPress('3')">3</button>
+          <button class="calc-btn" onclick="calcPress('-')">-</button>
+          <button class="calc-btn" onclick="calcClear()">C</button>
+          <button class="calc-btn" onclick="calcPress('0')">0</button>
+          <button class="calc-btn" onclick="calcEquals()">=</button>
+          <button class="calc-btn" onclick="calcPress('+')">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WINDOW 7: MS PAINT -->
+    <div id="paint-win" class="win98-window" onmousedown="focusWindow('paint-win')">
+      <div class="title-bar" onmousedown="startDrag(event, 'paint-win')">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="2" y="2" width="12" height="12" fill="#ffffff" />
+            <rect x="4" y="5" width="4" height="4" fill="#ff0000" />
+            <rect x="8" y="7" width="4" height="4" fill="#0000ff" />
+          </svg>
+          <span>untitled - Paint</span>
+        </div>
+        <div class="title-bar-buttons">
+          <button class="win-btn" tabindex="-1" onclick="handleMinimizeClick()">_</button>
+          <button class="win-btn" tabindex="-1" onclick="handleMaximizeClick()">□</button>
+          <button class="win-btn evasive-close" tabindex="-1" onmouseenter="evadeClose(this)" onmousedown="evadeClose(this)">X</button>
+        </div>
+      </div>
+
+      <div class="menu-bar">
+        <span>File</span><span>Edit</span><span>View</span><span>Image</span><span>Colors</span><span>Help</span>
+      </div>
+
+      <div class="paint-workspace">
+        <div class="paint-tools">
+          <button id="tool-pencil" class="paint-tool-btn active" onclick="setPaintTool('pencil')">Pencil</button>
+          <button id="tool-brush" class="paint-tool-btn" onclick="setPaintTool('brush')">Brush</button>
+          <button id="tool-eraser" class="paint-tool-btn" onclick="setPaintTool('eraser')">Eraser</button>
+        </div>
+        <canvas id="paint-canvas" width="410" height="240"></canvas>
+      </div>
+
+      <div class="paint-palette">
+        <div class="swatch" style="background:#000000;" onclick="pickPaintColor('#000000')"></div>
+        <div class="swatch" style="background:#808080;" onclick="pickPaintColor('#808080')"></div>
+        <div class="swatch" style="background:#800000;" onclick="pickPaintColor('#800000')"></div>
+        <div class="swatch" style="background:#ff0000;" onclick="pickPaintColor('#ff0000')"></div>
+        <div class="swatch" style="background:#808000;" onclick="pickPaintColor('#808000')"></div>
+        <div class="swatch" style="background:#ffff00;" onclick="pickPaintColor('#ffff00')"></div>
+        <div class="swatch" style="background:#008000;" onclick="pickPaintColor('#008000')"></div>
+        <div class="swatch" style="background:#000080;" onclick="pickPaintColor('#000080')"></div>
+        <div class="swatch" style="background:#0000ff;" onclick="pickPaintColor('#0000ff')"></div>
+        <div class="swatch" style="background:#800080;" onclick="pickPaintColor('#800080')"></div>
+        <span id="paint-status-label" style="margin-left:8px;">Draw something. I dare you.</span>
+      </div>
+    </div>
+
+    <!-- WINDOW 8: SOLITAIRE -->
+    <div id="solitaire-win" class="win98-window" onmousedown="focusWindow('solitaire-win')">
+      <div class="title-bar" onmousedown="startDrag(event, 'solitaire-win')">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="3" y="2" width="10" height="12" fill="#ffffff" />
+            <rect x="7" y="6" width="2" height="4" fill="#ff0000" />
+          </svg>
+          <span>Solitaire</span>
+        </div>
+        <div class="title-bar-buttons">
+          <button class="win-btn" tabindex="-1" onclick="handleMinimizeClick()">_</button>
+          <button class="win-btn" tabindex="-1" onclick="handleMaximizeClick()">□</button>
+          <button class="win-btn evasive-close" tabindex="-1" onmouseenter="evadeClose(this)" onmousedown="evadeClose(this)">X</button>
+        </div>
+      </div>
+
+      <div class="menu-bar">
+        <span>Game</span><span>Help</span>
+      </div>
+
+      <div class="sol-felt">
+        <div class="sol-top-row">
+          <div class="sol-deck-group">
+            <div class="sol-card back" onclick="trySolitaireMove('deck')"></div>
+            <div class="sol-slot" onclick="trySolitaireMove('waste')">EMPTY</div>
+          </div>
+          <div class="sol-foundations">
+            <div class="sol-slot" onclick="trySolitaireMove('ace')">A</div>
+            <div class="sol-slot" onclick="trySolitaireMove('ace')">A</div>
+            <div class="sol-slot" onclick="trySolitaireMove('ace')">A</div>
+            <div class="sol-slot" onclick="trySolitaireMove('ace')">A</div>
+          </div>
+        </div>
+
+        <div class="sol-columns">
+          <div class="sol-card" style="color:#ff0000;" onclick="trySolitaireMove('card')"><span>7♥</span><span style="align-self:flex-end;">♥7</span></div>
+          <div class="sol-card" style="color:#000000;" onclick="trySolitaireMove('card')"><span>K♠</span><span style="align-self:flex-end;">♠K</span></div>
+          <div class="sol-card" style="color:#ff0000;" onclick="trySolitaireMove('card')"><span>2♦</span><span style="align-self:flex-end;">♦2</span></div>
+          <div class="sol-card" style="color:#000000;" onclick="trySolitaireMove('card')"><span>9♣</span><span style="align-self:flex-end;">♣9</span></div>
+          <div class="sol-card" style="color:#ff0000;" onclick="trySolitaireMove('card')"><span>J♥</span><span style="align-self:flex-end;">♥J</span></div>
+          <div class="sol-card" style="color:#000000;" onclick="trySolitaireMove('card')"><span>4♠</span><span style="align-self:flex-end;">♠4</span></div>
+          <div class="sol-card" style="color:#ff0000;" onclick="trySolitaireMove('card')"><span>Q♦</span><span style="align-self:flex-end;">♦Q</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WINDOW 9: MEDIA PLAYER -->
+    <div id="mediaplayer-win" class="win98-window" onmousedown="focusWindow('mediaplayer-win')">
+      <div class="title-bar" onmousedown="startDrag(event, 'mediaplayer-win')">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="2" y="2" width="12" height="12" fill="#000000" />
+            <rect x="6" y="5" width="4" height="6" fill="#00ff00" />
+          </svg>
+          <span>Windows Media Player</span>
+        </div>
+        <div class="title-bar-buttons">
+          <button class="win-btn" tabindex="-1" onclick="handleMinimizeClick()">_</button>
+          <button class="win-btn" tabindex="-1" onclick="handleMaximizeClick()">□</button>
+          <button class="win-btn evasive-close" tabindex="-1" onmouseenter="evadeClose(this)" onmousedown="evadeClose(this)">X</button>
+        </div>
+      </div>
+
+      <div class="menu-bar">
+        <span>File</span><span>View</span><span>Play</span><span>Help</span>
+      </div>
+
+      <div class="mp-body">
+        <div class="mp-screen">
+          <div id="mp-track-title">Stopped - No Audio Loaded</div>
+          <div id="mp-time-readout">00:00 / 00:00</div>
+          <div class="mp-bars">
+            <div class="mp-bar"></div><div class="mp-bar"></div><div class="mp-bar"></div>
+            <div class="mp-bar"></div><div class="mp-bar"></div><div class="mp-bar"></div>
+            <div class="mp-bar"></div><div class="mp-bar"></div><div class="mp-bar"></div>
+          </div>
+        </div>
+        <div class="mp-controls">
+          <button class="btn-98" onclick="mediaPlay()">Play</button>
+          <button class="btn-98" onclick="mediaPause()">Pause</button>
+          <button class="btn-98" onclick="mediaStop()">Stop</button>
+          <button class="btn-98" onclick="mediaVolUp()">Vol +</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WINDOW 10: ADDRESS BOOK -->
+    <div id="addressbook-win" class="win98-window" onmousedown="focusWindow('addressbook-win')">
+      <div class="title-bar" onmousedown="startDrag(event, 'addressbook-win')">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="3" y="1" width="10" height="14" fill="#804000" />
+            <rect x="4" y="2" width="8" height="12" fill="#c08040" />
+          </svg>
+          <span>Address Book - Main Identity</span>
+        </div>
+        <div class="title-bar-buttons">
+          <button class="win-btn" tabindex="-1" onclick="handleMinimizeClick()">_</button>
+          <button class="win-btn" tabindex="-1" onclick="handleMaximizeClick()">□</button>
+          <button class="win-btn evasive-close" tabindex="-1" onmouseenter="evadeClose(this)" onmousedown="evadeClose(this)">X</button>
+        </div>
+      </div>
+
+      <div class="menu-bar">
+        <span>File</span><span>Edit</span><span>View</span><span>Tools</span><span>Help</span>
+      </div>
+
+      <div class="ab-table-wrap">
+        <table class="ab-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>E-mail Address</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="ab-tbody">
+            <tr>
+              <td>Mom</td>
+              <td>call_me_back@family.local</td>
+              <td>Ignored (47 missed calls)</td>
+            </tr>
+            <tr>
+              <td>Tech Support</td>
+              <td>dont_bother@unusuality.os</td>
+              <td>Out to lunch since 1996</td>
+            </tr>
+            <tr>
+              <td>Your Future Self</td>
+              <td>regret@tomorrow.local</td>
+              <td>Deeply disappointed</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ab-add-row">
+        <input id="ab-name-input" class="input-98" style="flex:1;" placeholder="Contact name..." />
+        <button class="btn-98" onclick="addHostileContact()">New Contact</button>
+      </div>
+    </div>
+
+    <!-- WINDOW 11: TASK MANAGER -->
+    <div id="taskmgr-win" class="win98-window" onmousedown="focusWindow('taskmgr-win')">
+      <div class="title-bar" onmousedown="startDrag(event, 'taskmgr-win')">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="1" y="2" width="14" height="12" fill="#000000" />
+            <rect x="4" y="5" width="3" height="8" fill="#00ff00" />
+            <rect x="9" y="3" width="3" height="10" fill="#ff0000" />
+          </svg>
+          <span>Windows Task Manager</span>
+        </div>
+        <div class="title-bar-buttons">
+          <button class="win-btn" tabindex="-1" onclick="handleMinimizeClick()">_</button>
+          <button class="win-btn" tabindex="-1" onclick="handleMaximizeClick()">□</button>
+          <button class="win-btn evasive-close" tabindex="-1" onmouseenter="evadeClose(this)" onmousedown="evadeClose(this)">X</button>
+        </div>
+      </div>
+
+      <div class="menu-bar">
+        <span>File</span><span>Options</span><span>View</span><span>Help</span>
+      </div>
+
+      <div class="tm-body">
+        <div style="font-weight:bold;">Active Processes:</div>
+        <div id="tm-process-list" class="tm-list">
+          <div class="tm-row selected" onclick="selectProcess(this)"><span>poor_decisions.dll</span><span>99% CPU</span></div>
+          <div class="tm-row" onclick="selectProcess(this)"><span>audacity.exe</span><span>84% CPU</span></div>
+          <div class="tm-row" onclick="selectProcess(this)"><span>your_excuses.sys</span><span>62% CPU</span></div>
+          <div class="tm-row" onclick="selectProcess(this)"><span>patience.exe</span><span>0% CPU (Not Responding)</span></div>
+          <div class="tm-row" onclick="selectProcess(this)"><span>spite_kernel.vxd</span><span>100% CPU</span></div>
+        </div>
+        <div style="display:flex; justify-content:flex-end;">
+          <button class="btn-98" onclick="endTaskRefused()">End Task</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WINDOW 12: CONTROL PANEL -->
+    <div id="controlpanel-win" class="win98-window" onmousedown="focusWindow('controlpanel-win')">
+      <div class="title-bar" onmousedown="startDrag(event, 'controlpanel-win')">
+        <div class="title-bar-left">
+          <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="2" y="2" width="12" height="12" fill="#c0c0c0" />
+            <rect x="4" y="4" width="3" height="8" fill="#000080" />
+            <rect x="9" y="4" width="3" height="8" fill="#800000" />
+          </svg>
+          <span>Control Panel</span>
+        </div>
+        <div class="title-bar-buttons">
+          <button class="win-btn" tabindex="-1" onclick="handleMinimizeClick()">_</button>
+          <button class="win-btn" tabindex="-1" onclick="handleMaximizeClick()">□</button>
+          <button class="win-btn evasive-close" tabindex="-1" onmouseenter="evadeClose(this)" onmousedown="evadeClose(this)">X</button>
+        </div>
+      </div>
+
+      <div class="menu-bar">
+        <span>File</span><span>Edit</span><span>View</span><span>Help</span>
+      </div>
+
+      <div class="cp-grid">
+        <div class="cp-item" onclick="showPopup('Display Properties: Available wallpapers: Default Teal (Because you have not earned aesthetics).')">
+          <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="2" y="2" width="12" height="9" fill="#808080" />
+            <rect x="3" y="3" width="10" height="7" fill="#008080" />
+            <rect x="5" y="12" width="6" height="2" fill="#808080" />
+          </svg>
+          <span>Display</span>
+        </div>
+
+        <div class="cp-item" onclick="showPopup('Mouse Settings: Pointer speed set to Sluggish. Clicking harder will not help.')">
+          <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="5" y="2" width="6" height="11" fill="#ffffff" />
+            <rect x="5" y="2" width="6" height="4" fill="#c0c0c0" />
+            <rect x="7" y="2" width="2" height="4" fill="#808080" />
+          </svg>
+          <span>Mouse</span>
+        </div>
+
+        <div class="cp-item" onclick="showPopup('Keyboard Properties: Repeat rate set to Judge Every Typo.')">
+          <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="1" y="5" width="14" height="7" fill="#c0c0c0" />
+            <rect x="2" y="6" width="12" height="5" fill="#808080" />
+            <rect x="3" y="7" width="10" height="1" fill="#ffffff" />
+            <rect x="4" y="9" width="8" height="1" fill="#ffffff" />
+          </svg>
+          <span>Keyboard</span>
+        </div>
+
+        <div class="cp-item" onclick="showPopup('Sounds: System volume locked at Passive-Aggressive Silence.')">
+          <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">
+            <rect x="3" y="6" width="3" height="4" fill="#808080" />
+            <rect x="6" y="4" width="3" height="8" fill="#808080" />
+            <rect x="11" y="5" width="1" height="6" fill="#000080" />
+            <rect x="13" y="3" width="1" height="10" fill="#000080" />
+          </svg>
+          <span>Sounds</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHUT DOWN DIALOG (REFUSES TO SHUT DOWN) -->
+    <div id="shutdown-overlay">
+      <div id="shutdown-box">
+        <div class="title-bar" style="cursor: default;">
+          <div class="title-bar-left">
+            <span>Shut Down Windows</span>
+          </div>
+          <div class="title-bar-buttons">
+            <button class="win-btn" onclick="closeShutdownDialog()">X</button>
+          </div>
+        </div>
+
+        <div class="sd-body">
+          <div style="font-weight:bold;">What do you want the computer to do?</div>
+          <div class="sd-option">
+            <input type="radio" name="sd-choice" id="sd-opt-1" checked />
+            <label for="sd-opt-1">Shut down</label>
+          </div>
+          <div class="sd-option">
+            <input type="radio" name="sd-choice" id="sd-opt-2" />
+            <label for="sd-opt-2">Restart</label>
+          </div>
+          <div class="sd-option">
+            <input type="radio" name="sd-choice" id="sd-opt-3" />
+            <label for="sd-opt-3">Restart in MS-DOS mode</label>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:6px; margin-top:6px;">
+            <button class="btn-98" onclick="refuseShutdown()">Yes</button>
+            <button class="btn-98" onclick="closeShutdownDialog()">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RETRO POPUP BOX -->
+    <div id="popup-overlay">
+      <div id="popup-box">
+        <div class="title-bar" style="cursor: default;">
+          <div class="title-bar-left">
+            <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+              <rect x="7" y="2" width="2" height="2" fill="#ffff00" />
+              <rect x="6" y="4" width="4" height="2" fill="#ffff00" />
+              <rect x="5" y="6" width="6" height="2" fill="#ffff00" />
+              <rect x="4" y="8" width="8" height="2" fill="#ffff00" />
+              <rect x="3" y="10" width="10" height="2" fill="#ffff00" />
+              <rect x="2" y="12" width="12" height="2" fill="#ffff00" />
+              <rect x="7" y="6" width="2" height="4" fill="#000000" />
+              <rect x="7" y="11" width="2" height="1" fill="#000000" />
+            </svg>
+            <span id="popup-title">unusualityOS Alert</span>
+          </div>
+        </div>
+
+        <div class="popup-content">
+          <svg width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges" style="flex-shrink:0;">
+            <rect x="7" y="1" width="2" height="2" fill="#ffff00" />
+            <rect x="6" y="3" width="4" height="2" fill="#ffff00" />
+            <rect x="5" y="5" width="6" height="2" fill="#ffff00" />
+            <rect x="4" y="7" width="8" height="2" fill="#ffff00" />
+            <rect x="3" y="9" width="10" height="2" fill="#ffff00" />
+            <rect x="2" y="11" width="12" height="2" fill="#ffff00" />
+            <rect x="1" y="13" width="14" height="2" fill="#ffff00" />
+            <rect x="7" y="5" width="2" height="5" fill="#000000" />
+            <rect x="7" y="11" width="2" height="2" fill="#000000" />
+          </svg>
+          <div id="popup-message" class="popup-text"></div>
+        </div>
+
+        <div class="popup-footer">
+          <button class="btn-98" onclick="closePopup()">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- START MENU -->
+  <div id="start-menu" onclick="event.stopPropagation()">
+    <div class="start-menu-inner">
+      <div class="start-banner">unusualityOS 98</div>
+      <div class="start-items">
+        <div class="start-item" onclick="openWindowFromStart('lost-found-win')"><span>Lost and Found</span></div>
+        <div class="start-item" onclick="openWindowFromStart('terminal-win')"><span>MS-DOS Prompt</span></div>
+        <div class="start-item" onclick="openWindowFromStart('ie-win')"><span>Internet Explorer</span></div>
+        <div class="start-item" onclick="openWindowFromStart('minesweeper-win')"><span>Minesweeper</span></div>
+        <div class="start-item" onclick="openWindowFromStart('notepad-win')"><span>Notepad</span></div>
+        <div class="start-item" onclick="openWindowFromStart('calc-win')"><span>Calculator</span></div>
+        <div class="start-item" onclick="openWindowFromStart('paint-win')"><span>Paint</span></div>
+        <div class="start-item" onclick="openWindowFromStart('solitaire-win')"><span>Solitaire</span></div>
+        <div class="start-item" onclick="openWindowFromStart('mediaplayer-win')"><span>Media Player</span></div>
+        <div class="start-item" onclick="openWindowFromStart('addressbook-win')"><span>Address Book</span></div>
+        <div class="start-item" onclick="openWindowFromStart('taskmgr-win')"><span>Task Manager</span></div>
+        <div class="start-item" onclick="openWindowFromStart('controlpanel-win')"><span>Control Panel</span></div>
+        <div class="start-divider"></div>
+        <div class="start-item" onclick="openShutdownDialog()"><span><strong>Shut Down...</strong></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOCK FLYOUT -->
+  <div id="clock-flyout" onclick="event.stopPropagation()">
+    <div class="title-bar" style="cursor: default;">
+      <div class="title-bar-left">
+        <svg width="14" height="14" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="3" y="2" width="10" height="12" fill="#ffffff" />
+          <rect x="7" y="4" width="2" height="5" fill="#000000" />
+          <rect x="7" y="8" width="4" height="2" fill="#000000" />
+        </svg>
+        <span>TI:ME</span>
+      </div>
+    </div>
+    <div id="clock-flyout-text" class="clock-flyout-body"></div>
+  </div>
+
+  <!-- 4. TASKBAR -->
+  <div id="taskbar" onclick="closeMenus()">
+    <div class="taskbar-left">
+      <button id="start-btn" onclick="toggleStartMenu(event)">
+        <svg width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+          <rect x="2" y="2" width="5" height="5" fill="#ff0000" />
+          <rect x="8" y="2" width="5" height="5" fill="#00aa00" />
+          <rect x="2" y="8" width="5" height="5" fill="#0000ff" />
+          <rect x="8" y="8" width="5" height="5" fill="#ffff00" />
+        </svg>
+        <span>Start</span>
+      </button>
+      <div id="taskbar-windows" style="display:flex; gap:4px; overflow:hidden;"></div>
+    </div>
+
+    <div class="tray-area" onclick="event.stopPropagation()">
+      <button id="tray-clock-btn" onclick="toggleClockFlyout(event)">TI:ME</button>
+    </div>
+  </div>
+
+  <script>
+    const ASSIGNED_PASSWORD = "NiceTryChamp_StillLockedOut99!";
+    let passwordRevealedOnce = false;
+    let pwFlashTimeout = null;
+    let webcamStream = null;
+    let zCounter = 40;
+
+    // 1. 3-SECOND BLUE BOOT SCREEN -> LOGIN SCREEN
+    window.addEventListener("DOMContentLoaded", () => {
+      initMinesweeperGrid();
+      initPaintCanvas();
+      setTimeout(() => {
+        const boot = document.getElementById("boot-screen");
+        boot.style.opacity = "0";
+        setTimeout(() => {
+          boot.style.display = "none";
+          document.getElementById("login-screen").style.display = "flex";
+        }, 250);
+      }, 3000);
+    });
+
+    // 2. FACE ID SCANNER SEQUENCE (3s crumbs, +3s just kidding)
+    async function startFaceId() {
+      document.getElementById("faceid-btn").disabled = true;
+      const panel = document.getElementById("faceid-panel");
+      const statusEl = document.getElementById("faceid-status");
+      const videoEl = document.getElementById("webcam-video");
+      const fallbackEl = document.getElementById("fallback-face");
+
+      panel.style.display = "flex";
+      statusEl.textContent = "Scanning facial geometry... Hold still...";
+
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          webcamStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+          videoEl.srcObject = webcamStream;
+          fallbackEl.style.display = "none";
+        } catch (err) {
+          videoEl.style.display = "none";
+          fallbackEl.style.display = "block";
+        }
+      } else {
+        videoEl.style.display = "none";
+        fallbackEl.style.display = "block";
+      }
+
+      setTimeout(() => {
+        statusEl.textContent = "Also you have crumbs on your chin.";
+      }, 3000);
+
+      setTimeout(() => {
+        statusEl.textContent = "Haha just kidding, made you look though.";
+      }, 6000);
+
+      setTimeout(() => {
+        statusEl.textContent = "Identity confirmed, unfortunately.";
+        stopWebcam();
+        setTimeout(() => {
+          document.getElementById("password-setup-panel").style.display = "flex";
+          document.getElementById("new-pw-input").focus();
+        }, 1200);
+      }, 8000);
+    }
+
+    function stopWebcam() {
+      if (webcamStream) {
+        webcamStream.getTracks().forEach(track => track.stop());
+        webcamStream = null;
+      }
+    }
+
+    // 3. PASSWORD CREATION & SNARKY OVERRIDE
+    function submitNewPassword() {
+      const inputEl = document.getElementById("new-pw-input");
+      const enteredPw = inputEl.value;
+      const noticeEl = document.getElementById("pw-assigned-notice");
+      const boxEl = document.getElementById("assigned-pw-box");
+      const pwValueEl = document.getElementById("assigned-pw-value");
+      const scoldEl = document.getElementById("pw-scold-msg");
+
+      noticeEl.textContent = `"${enteredPw}" is not secure. Password assigned.`;
+      boxEl.style.display = "flex";
+      scoldEl.textContent = "";
+      passwordRevealedOnce = false;
+
+      pwValueEl.textContent = ASSIGNED_PASSWORD;
+      clearTimeout(pwFlashTimeout);
+      pwFlashTimeout = setTimeout(() => {
+        pwValueEl.textContent = "•".repeat(ASSIGNED_PASSWORD.length);
+      }, 1500);
+    }
+
+    function toggleShowPassword() {
+      const pwValueEl = document.getElementById("assigned-pw-value");
+      const scoldEl = document.getElementById("pw-scold-msg");
+
+      if (pwValueEl.textContent === ASSIGNED_PASSWORD) {
+        pwValueEl.textContent = "•".repeat(ASSIGNED_PASSWORD.length);
+      } else {
+        pwValueEl.textContent = ASSIGNED_PASSWORD;
+        clearTimeout(pwFlashTimeout);
+        pwFlashTimeout = setTimeout(() => {
+          pwValueEl.textContent = "•".repeat(ASSIGNED_PASSWORD.length);
+        }, 1500);
+      }
+
+      if (!passwordRevealedOnce) {
+        passwordRevealedOnce = true;
+        scoldEl.textContent = "You should have been looking the first time. Blinking is not an excuse.";
+      } else {
+        scoldEl.textContent = "Still can't pay attention the first time? Remarkable.";
+      }
+    }
+
+    function enterDesktop() {
+      stopWebcam();
+      document.getElementById("login-screen").style.display = "none";
+      document.getElementById("desktop").style.display = "block";
+      document.getElementById("taskbar").style.display = "flex";
+    }
+
+    // 4. DESKTOP SELECTION & WINDOW MANAGEMENT
+    function selectDesktopIcon(event, iconId) {
+      event.stopPropagation();
+      closeMenus();
+      document.querySelectorAll(".desktop-icon").forEach(el => el.classList.remove("selected"));
+      document.getElementById(iconId).classList.add("selected");
+    }
+
+    function clearDesktopSelections(event) {
+      if (event.target.id === "desktop") {
+        document.querySelectorAll(".desktop-icon").forEach(el => el.classList.remove("selected"));
+      }
+      closeMenus();
+    }
+
+    function openWindow(winId) {
+      closeMenus();
+      const win = document.getElementById(winId);
+      win.style.display = "flex";
+      focusWindow(winId);
+      renderTaskbarChips();
+
+      if (winId === "terminal-win") {
+        setTimeout(() => document.getElementById("dos-input").focus(), 30);
+      } else if (winId === "notepad-win") {
+        setTimeout(() => document.getElementById("notepad-textarea").focus(), 30);
+      }
+    }
+
+    function openWindowFromStart(winId) {
+      openWindow(winId);
+    }
+
+    function focusWindow(winId) {
+      zCounter += 1;
+      document.getElementById(winId).style.zIndex = zCounter;
+      renderTaskbarChips(winId);
+    }
+
+    function renderTaskbarChips(activeWinId = null) {
+      const container = document.getElementById("taskbar-windows");
+      const defs = [
+        { id: "lost-found-win", label: "Lost and Found" },
+        { id: "terminal-win", label: "MS-DOS Prompt" },
+        { id: "ie-win", label: "Internet Explorer" },
+        { id: "minesweeper-win", label: "Minesweeper" },
+        { id: "notepad-win", label: "Notepad" },
+        { id: "calc-win", label: "Calculator" },
+        { id: "paint-win", label: "Paint" },
+        { id: "solitaire-win", label: "Solitaire" },
+        { id: "mediaplayer-win", label: "Media Player" },
+        { id: "addressbook-win", label: "Address Book" },
+        { id: "taskmgr-win", label: "Task Manager" },
+        { id: "controlpanel-win", label: "Control Panel" }
+      ];
+
+      container.innerHTML = "";
+      defs.forEach(item => {
+        const win = document.getElementById(item.id);
+        if (win && win.style.display === "flex") {
+          const chip = document.createElement("div");
+          chip.className = "task-chip" + (item.id === activeWinId ? " active-task" : "");
+          chip.textContent = item.label;
+          chip.onclick = (e) => {
+            e.stopPropagation();
+            focusWindow(item.id);
+          };
+          container.appendChild(chip);
+        }
+      });
+    }
+
+    // TITLEBAR BUTTON HANDLERS
+    function handleMinimizeClick() {
+      showPopup("Minimising won’t make your problems go away, you know.");
+    }
+
+    function handleMaximizeClick() {
+      showPopup("Making it bigger won’t make you any more productive.");
+    }
+
+    // EVASIVE 'X' BUTTON
+    function evadeClose(btn) {
+      const currentLeft = parseFloat(btn.style.left || "0");
+      btn.style.position = "relative";
+      btn.style.left = `${currentLeft === 0 ? -48 : 0}px`;
+    }
+
+    // DRAGGABLE WINDOWS
+    let dragState = null;
+    function startDrag(event, winId) {
+      if (event.target.classList.contains("win-btn")) return;
+      focusWindow(winId);
+      const win = document.getElementById(winId);
+      const rect = win.getBoundingClientRect();
+      dragState = {
+        win,
+        offsetX: event.clientX - rect.left,
+        offsetY: event.clientY - rect.top
+      };
+    }
+
+    document.addEventListener("mousemove", (event) => {
+      if (!dragState) return;
+      const maxX = window.innerWidth - 60;
+      const maxY = window.innerHeight - 54;
+      const newLeft = Math.max(0, Math.min(maxX, event.clientX - dragState.offsetX));
+      const newTop = Math.max(0, Math.min(maxY, event.clientY - dragState.offsetY));
+      dragState.win.style.left = `${newLeft}px`;
+      dragState.win.style.top = `${newTop}px`;
+    });
+
+    document.addEventListener("mouseup", () => {
+      dragState = null;
+    });
+
+    // 5. LOST AND FOUND FEATURE
+    function selectFileItem(event, fileId) {
+      event.stopPropagation();
+      document.querySelectorAll(".file-item").forEach(el => el.classList.remove("selected"));
+      const item = document.getElementById(fileId);
+      if (item) item.classList.add("selected");
+    }
+
+    function openLostFile(fileId) {
+      const el = document.getElementById(fileId);
+      if (!el) return;
+      el.remove();
+
+      const remaining = document.querySelectorAll("#lost-found-files .file-item").length;
+      document.getElementById("lf-status-count").textContent = `${remaining} object(s)`;
+
+      showPopup(
+        "Oops, I lost your file. It is called Lost and Found for a reason, what did you expect? Don't expect me to find the file for you though."
+      );
+    }
+
+    // 6. TERMINAL FEATURE
+    function handleDosKey(event) {
+      if (event.key !== "Enter") return;
+      const input = document.getElementById("dos-input");
+      const raw = input.value;
+      const trimmed = raw.trim();
+      input.value = "";
+
+      if (!trimmed) return;
+
+      const history = document.getElementById("dos-history");
+      const echoLine = document.createElement("div");
+      echoLine.className = "dos-line";
+      echoLine.textContent = `C:\\>${raw}`;
+      history.appendChild(echoLine);
+
+      const hasPlease = /\bplease\b/i.test(trimmed);
+
+      if (!hasPlease) {
+        showPopup("Where are your manners? Say please.");
+      } else {
+        const replyLine = document.createElement("div");
+        replyLine.className = "dos-line";
+        replyLine.textContent = "command 'please' not found.";
+        history.appendChild(replyLine);
+      }
+
+      const dosScreen = document.getElementById("dos-screen");
+      dosScreen.scrollTop = dosScreen.scrollHeight;
+    }
+
+    // 7. INTERNET EXPLORER FEATURE
+    function refreshInternetExplorer() {
+      showPopup("Refreshing didn't change the time. The internet is still closed until Tuesdays from 2:00 PM to 2:04 PM.");
+    }
+
+    // 8. RIGGED MINESWEEPER FEATURE
+    let msGameOver = false;
+    let msSeconds = 0;
+    let msTimerInterval = null;
+
+    function initMinesweeperGrid() {
+      const grid = document.getElementById("ms-grid");
+      grid.innerHTML = "";
+      for (let i = 0; i < 81; i++) {
+        const cell = document.createElement("button");
+        cell.className = "ms-cell";
+        cell.type = "button";
+        cell.onclick = () => triggerRiggedMine(cell);
+        grid.appendChild(cell);
+      }
+    }
+
+    function createMineSvg() {
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("width", "14");
+      svg.setAttribute("height", "14");
+      svg.setAttribute("viewBox", "0 0 16 16");
+      svg.setAttribute("shape-rendering", "crispEdges");
+
+      const rects = [
+        [7, 1, 2, 14, "#000000"],
+        [1, 7, 14, 2, "#000000"],
+        [3, 3, 10, 10, "#111111"],
+        [5, 5, 2, 2, "#ffffff"]
+      ];
+
+      rects.forEach(([x, y, w, h, fill]) => {
+        const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        r.setAttribute("x", x);
+        r.setAttribute("y", y);
+        r.setAttribute("width", w);
+        r.setAttribute("height", h);
+        r.setAttribute("fill", fill);
+        svg.appendChild(r);
+      });
+
+      return svg;
+    }
+
+    function setDeadFaceSvg() {
+      const faceSvg = document.getElementById("ms-face-svg");
+      faceSvg.innerHTML = `
+        <rect x="4" y="1" width="8" height="1" fill="#000000" />
+        <rect x="2" y="2" width="2" height="1" fill="#000000" />
+        <rect x="12" y="2" width="2" height="1" fill="#000000" />
+        <rect x="4" y="2" width="8" height="12" fill="#ffff00" />
+        <rect x="2" y="3" width="12" height="10" fill="#ffff00" />
+        <rect x="5" y="5" width="1" height="1" fill="#000000" />
+        <rect x="7" y="5" width="1" height="1" fill="#000000" />
+        <rect x="6" y="6" width="1" height="1" fill="#000000" />
+        <rect x="5" y="7" width="1" height="1" fill="#000000" />
+        <rect x="7" y="7" width="1" height="1" fill="#000000" />
+        <rect x="9" y="5" width="1" height="1" fill="#000000" />
+        <rect x="11" y="5" width="1" height="1" fill="#000000" />
+        <rect x="10" y="6" width="1" height="1" fill="#000000" />
+        <rect x="9" y="7" width="1" height="1" fill="#000000" />
+        <rect x="11" y="7" width="1" height="1" fill="#000000" />
+        <rect x="6" y="10" width="4" height="1" fill="#000000" />
+      `;
+    }
+
+    function setNormalFaceSvg() {
+      const faceSvg = document.getElementById("ms-face-svg");
+      faceSvg.innerHTML = `
+        <rect x="4" y="1" width="8" height="1" fill="#000000" />
+        <rect x="2" y="2" width="2" height="1" fill="#000000" />
+        <rect x="12" y="2" width="2" height="1" fill="#000000" />
+        <rect x="4" y="2" width="8" height="12" fill="#ffff00" />
+        <rect x="2" y="3" width="12" height="10" fill="#ffff00" />
+        <rect x="5" y="5" width="2" height="2" fill="#000000" />
+        <rect x="9" y="5" width="2" height="2" fill="#000000" />
+        <rect x="5" y="10" width="6" height="1" fill="#000000" />
+        <rect x="4" y="9" width="1" height="1" fill="#000000" />
+        <rect x="11" y="9" width="1" height="1" fill="#000000" />
+      `;
+    }
+
+    function triggerRiggedMine(clickedCell) {
+      if (msGameOver) return;
+      msGameOver = true;
+      clearInterval(msTimerInterval);
+
+      const cells = document.querySelectorAll("#ms-grid .ms-cell");
+      cells.forEach(cell => {
+        cell.innerHTML = "";
+        cell.appendChild(createMineSvg());
+        cell.classList.add(cell === clickedCell ? "boom" : "revealed-mine");
+      });
+
+      document.getElementById("ms-mines-led").textContent = "000";
+      setDeadFaceSvg();
+
+      const insults = [
+        "First click and you immediately found a mine? Honestly impressive how bad you are at this.",
+        "There were 81 squares and you still managed to be catastrophic on move one. Truly breathtaking incompetence.",
+        "You clicked a single square and blew up. Minesweeper wasn't even hard yet and you still failed."
+      ];
+      const msg = insults[Math.floor(Math.random() * insults.length)];
+      showPopup(msg);
+    }
+
+    function resetMinesweeper() {
+      msGameOver = false;
+      msSeconds = 0;
+      clearInterval(msTimerInterval);
+      document.getElementById("ms-mines-led").textContent = "010";
+      document.getElementById("ms-timer-led").textContent = "000";
+      setNormalFaceSvg();
+      initMinesweeperGrid();
+
+      msTimerInterval = setInterval(() => {
+        if (msGameOver) return;
+        msSeconds = Math.min(999, msSeconds + 1);
+        document.getElementById("ms-timer-led").textContent = String(msSeconds).padStart(3, "0");
+      }, 1000);
+    }
+
+    // 9. SABOTAGED NOTEPAD FEATURE
+    let notepadTimer = null;
+    const POSITIVE_TO_NEGATIVE = [
+      ["good", "mediocre"],
+      ["great", "unfortunate"],
+      ["awesome", "bearable"],
+      ["amazing", "questionable"],
+      ["wonderful", "grim"],
+      ["fantastic", "bleak"],
+      ["brilliant", "dim"],
+      ["excellent", "subpar"],
+      ["perfect", "flawed"],
+      ["happy", "miserable"],
+      ["glad", "resigned"],
+      ["excited", "dreadful"],
+      ["love", "tolerate"],
+      ["loved", "endured"],
+      ["best", "least-bad"],
+      ["smart", "unremarkable"],
+      ["clever", "suspicious"],
+      ["nice", "lukewarm"],
+      ["kind", "suspiciously-polite"],
+      ["success", "accident"],
+      ["successful", "barely-surviving"],
+      ["win", "fluke"],
+      ["important", "unremarkable"]
+    ];
+
+    function scheduleNotepadSabotage() {
+      document.getElementById("notepad-status").textContent = "Watching you type with mild judgment...";
+      clearTimeout(notepadTimer);
+      notepadTimer = setTimeout(sabotageNotepadNow, 1300);
+    }
+
+    function sabotageNotepadNow() {
+      const textarea = document.getElementById("notepad-textarea");
+      const statusEl = document.getElementById("notepad-status");
+      let text = textarea.value;
+      let changed = false;
+
+      POSITIVE_TO_NEGATIVE.forEach(([pos, neg]) => {
+        const regex = new RegExp(`\\b${pos}\\b`, "gi");
+        if (regex.test(text)) {
+          changed = true;
+          text = text.replace(regex, (match) => {
+            if (match === match.toUpperCase()) return neg.toUpperCase();
+            if (match[0] === match[0].toUpperCase()) {
+              return neg.charAt(0).toUpperCase() + neg.slice(1);
+            }
+            return neg;
+          });
+        }
+      });
+
+      if (changed) {
+        const cursorPos = textarea.selectionStart;
+        textarea.value = text;
+        textarea.selectionStart = textarea.selectionEnd = Math.min(text.length, cursorPos);
+        statusEl.textContent = "Fixed your overly cheerful adjectives.";
+      } else {
+        statusEl.textContent = "Nothing positive left to ruin.";
+      }
+    }
+
+    // 10. CALCULATOR ("CREATIVE MATH")
+    let calcExpr = "";
+    function calcPress(val) {
+      calcExpr += val;
+      document.getElementById("calc-display").textContent = calcExpr;
+    }
+
+    function calcClear() {
+      calcExpr = "";
+      document.getElementById("calc-display").textContent = "0";
+    }
+
+    function calcEquals() {
+      if (!calcExpr) return;
+      if (/\/0(?!\d)/.test(calcExpr)) {
+        calcExpr = "";
+        document.getElementById("calc-display").textContent = "ERR";
+        showPopup("Dividing by zero is bold, much like your confidence.");
+        return;
+      }
+
+      try {
+        const raw = Function(`"use strict"; return (${calcExpr});`)();
+        if (typeof raw !== "number" || !isFinite(raw)) {
+          document.getElementById("calc-display").textContent = "NOPE";
+          calcExpr = "";
+          return;
+        }
+        if (Math.random() < 0.25) {
+          document.getElementById("calc-display").textContent = "GUESS";
+          showPopup("Honestly, just guess. You have a brain, supposedly.");
+          calcExpr = "";
+          return;
+        }
+        const offset = (Math.random() > 0.5 ? 1 : -1) * Number((Math.random() * 0.4 + 0.03).toFixed(2));
+        const wrong = Number((raw + offset).toFixed(2));
+        document.getElementById("calc-display").textContent = String(wrong);
+        calcExpr = String(wrong);
+      } catch (e) {
+        document.getElementById("calc-display").textContent = "SYNTAX";
+        calcExpr = "";
+      }
+    }
+
+    // 11. MS PAINT ("JUDGMENTAL CANVAS")
+    let paintDrawing = false;
+    let paintStrokeCount = 0;
+    let paintTool = "pencil";
+    let paintColor = "#000000";
+
+    function initPaintCanvas() {
+      const canvas = document.getElementById("paint-canvas");
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      canvas.addEventListener("mousedown", (e) => {
+        paintDrawing = true;
+        drawOnPaint(e);
+      });
+
+      canvas.addEventListener("mousemove", (e) => {
+        if (!paintDrawing) return;
+        drawOnPaint(e);
+      });
+
+      window.addEventListener("mouseup", () => {
+        paintDrawing = false;
+      });
+    }
+
+    function setPaintTool(tool) {
+      paintTool = tool;
+      document.querySelectorAll(".paint-tool-btn").forEach(b => b.classList.remove("active"));
+      document.getElementById(`tool-${tool}`).classList.add("active");
+    }
+
+    function pickPaintColor(hex) {
+      const wrongColors = ["#808000", "#800080", "#808080", "#008000", "#800000", "#000080"];
+      paintColor = wrongColors[Math.floor(Math.random() * wrongColors.length)];
+      document.getElementById("paint-status-label").textContent = "Close enough to that color.";
+    }
+
+    function drawOnPaint(e) {
+      const canvas = document.getElementById("paint-canvas");
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const ctx = canvas.getContext("2d");
+
+      if (paintTool === "eraser") {
+        ctx.fillStyle = "#ffcccc";
+        ctx.fillRect(x - 4, y - 4, 8, 8);
+      } else {
+        const size = paintTool === "brush" ? 6 : 2;
+        ctx.fillStyle = paintColor;
+        ctx.fillRect(x - size / 2, y - size / 2, size, size);
+      }
+
+      paintStrokeCount += 1;
+      if (paintStrokeCount >= 75) {
+        paintStrokeCount = 0;
+        paintDrawing = false;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        document.getElementById("paint-status-label").textContent = "Canvas purged.";
+        showPopup("I deleted that drawing to save us both the embarrassment.");
+      }
+    }
+
+    // 12. SOLITAIRE ("RIGGED DECK")
+    function trySolitaireMove(source) {
+      const snark = {
+        deck: "The deck is out of cards. Mostly because it doesn't feel like dealing to you.",
+        waste: "Nothing there. Just like your strategy.",
+        ace: "You cannot place that on an Ace foundation. Did you even read the rules?",
+        card: "Invalid move. Also your posture is terrible."
+      };
+      showPopup(snark[source] || "Illegal move.");
+    }
+
+    // 13. MEDIA PLAYER ("COMPLETE SILENCE")
+    let mpInterval = null;
+    let mpSeconds = 0;
+
+    function mediaPlay() {
+      document.getElementById("mp-track-title").textContent = "Playing: Complete Silence (Extended Mix)";
+      clearInterval(mpInterval);
+      mpInterval = setInterval(() => {
+        mpSeconds += 1;
+        const mins = String(Math.floor(mpSeconds / 60)).padStart(2, "0");
+        const secs = String(mpSeconds % 60).padStart(2, "0");
+        document.getElementById("mp-time-readout").textContent = `${mins}:${secs} / 99:59`;
+        document.querySelectorAll(".mp-bar").forEach(bar => {
+          bar.style.height = `${Math.floor(Math.random() * 5) + 2}px`;
+        });
+      }, 600);
+    }
+
+    function mediaPause() {
+      clearInterval(mpInterval);
+      document.getElementById("mp-track-title").textContent = "Paused - Silence Interrupted";
+    }
+
+    function mediaStop() {
+      clearInterval(mpInterval);
+      mpSeconds = 0;
+      document.getElementById("mp-track-title").textContent = "Stopped - No Audio Loaded";
+      document.getElementById("mp-time-readout").textContent = "00:00 / 00:00";
+      document.querySelectorAll(".mp-bar").forEach(bar => {
+        bar.style.height = "3px";
+      });
+    }
+
+    function mediaVolUp() {
+      showPopup("Volume lowered. You were listening to silence way too loudly.");
+    }
+
+    // 14. ADDRESS BOOK ("AUTOMATICALLY BLOCKED")
+    function addHostileContact() {
+      const input = document.getElementById("ab-name-input");
+      const name = input.value.trim();
+      if (!name) {
+        showPopup("Type a name first before trying to bother someone.");
+        return;
+      }
+      input.value = "";
+      const tbody = document.getElementById("ab-tbody");
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${name.replace(/</g, "&lt;")}</td>
+        <td>unwanted_${name.toLowerCase().replace(/[^a-z0-9]/g, "")}@blocked.local</td>
+        <td>Blocked on your behalf</td>
+      `;
+      tbody.appendChild(tr);
+      showPopup(`Added "${name}" and immediately blocked them so they don't have to deal with you.`);
+    }
+
+    // 15. TASK MANAGER ("ACCESS DENIED")
+    function selectProcess(rowEl) {
+      document.querySelectorAll("#tm-process-list .tm-row").forEach(r => r.classList.remove("selected"));
+      rowEl.classList.add("selected");
+    }
+
+    function endTaskRefused() {
+      const selected = document.querySelector("#tm-process-list .tm-row.selected span");
+      const procName = selected ? selected.textContent : "this process";
+      showPopup(`Access Denied: Cannot terminate ${procName}. The system relies heavily on your flaws to operate.`);
+    }
+
+    // 16. SHUT DOWN DIALOG (REFUSES TO SHUT DOWN)
+    function openShutdownDialog() {
+      closeMenus();
+      document.getElementById("shutdown-overlay").style.display = "flex";
+    }
+
+    function closeShutdownDialog() {
+      document.getElementById("shutdown-overlay").style.display = "none";
+    }
+
+    function refuseShutdown() {
+      closeShutdownDialog();
+      showPopup("Shut down denied. You haven't finished staring at the screen yet.");
+    }
+
+    // 17. CLOCK FLYOUT WITH SNARKY AMBIGUOUS PHRASES
+    const SNARKY_TIME_PHRASES = [
+      "It might be somewhere between 2 o'clock and 3 o'clock somewhere in the world. Not sure about here though.",
+      "Late enough that you should be doing something else, early enough that you won't.",
+      "Time is a flat circle and right now it’s rolling away from your deadlines.",
+      "Somewhere around o'clock. Give or take three hours and an attitude adjustment.",
+      "Not quite now, not quite later, definitely not your business.",
+      "Roughly half-past why are you even checking the clock?",
+      "Between yesterday and tomorrow, leaning heavily toward regret."
+    ];
+
+    function toggleClockFlyout(event) {
+      event.stopPropagation();
+      const flyout = document.getElementById("clock-flyout");
+      const startMenu = document.getElementById("start-menu");
+      startMenu.style.display = "none";
+      document.getElementById("start-btn").classList.remove("active");
+
+      if (flyout.style.display === "block") {
+        flyout.style.display = "none";
+        return;
+      }
+
+      const phrase = SNARKY_TIME_PHRASES[Math.floor(Math.random() * SNARKY_TIME_PHRASES.length)];
+      document.getElementById("clock-flyout-text").textContent = phrase;
+      flyout.style.display = "block";
+    }
+
+    function toggleStartMenu(event) {
+      event.stopPropagation();
+      const menu = document.getElementById("start-menu");
+      const btn = document.getElementById("start-btn");
+      document.getElementById("clock-flyout").style.display = "none";
+
+      const isOpen = menu.style.display === "block";
+      menu.style.display = isOpen ? "none" : "block";
+      btn.classList.toggle("active", !isOpen);
+    }
+
+    function closeMenus() {
+      document.getElementById("start-menu").style.display = "none";
+      document.getElementById("clock-flyout").style.display = "none";
+      document.getElementById("start-btn").classList.remove("active");
+    }
+
+    // POPUP HELPERS
+    function showPopup(message, title = "unusualityOS Alert") {
+      document.getElementById("popup-title").textContent = title;
+      document.getElementById("popup-message").textContent = message;
+      document.getElementById("popup-overlay").style.display = "flex";
+    }
+
+    function closePopup() {
+      document.getElementById("popup-overlay").style.display = "none";
+    }
+  </script>
+</body>
+</html>
